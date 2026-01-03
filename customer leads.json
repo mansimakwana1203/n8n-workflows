@@ -31,13 +31,14 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=apify_api_5kn4fiOoHKOYqHz8znmpDBvhfDP50330g1Yp",
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items",
+        
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "Authorization",
-              "value": "apify_api_5kn4fiOoHKOYqHz8znmpDBvhfDP50330g1Yp"
+              "value": "={{ 'Bearer ' + $env.APIFY_API_TOKEN }}"
             },
             {
               "name": "Accept",
@@ -408,7 +409,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer fc-7958a66ce05e4741848b8055e31d1f2b"
+              "value": "={{ 'Bearer ' + $env.FIRECRAWL_API_KEY }}"
             }
           ]
         },
