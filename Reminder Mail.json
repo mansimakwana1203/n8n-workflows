@@ -1,0 +1,150 @@
+{
+  "name": "Reminder Mail",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "request an installation",
+        "formDescription": "fill out this  form to  request an installation . we'll reach out via email to finalize your appointment .",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Prefered install date",
+              "fieldType": "date",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a65fb1f4-f4b2-40e6-a9a4-f744381eb132",
+      "name": "On form submission",
+      "webhookId": "2f6badf5-c4b4-401f-8e1f-9dca4242517b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2374b581-b86c-400e-9bf8-fdea68616bc1",
+              "leftValue": "={{ $json['Prefered install date'].toDateTime() }}  ",
+              "rightValue": "={{ $now.plus(7 ,'days') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3a237d1e-c3b2-46a5-a619-d2b92dad1a16",
+      "name": "is within 7 days?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        416,
+        96
+      ],
+      "id": "57f52293-9d51-4266-8728-b8d7011c8268",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A1PPZCPV5",
+          "mode": "list",
+          "cachedResultName": "all-mansi"
+        },
+        "text": "=New install request (within 7 days).\nconected email:{{ $json['Email Address'] }}\npreferred install date:{{$json['Prefered install date']}}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        432,
+        -128
+      ],
+      "id": "e6e673c2-88d0-4ebd-bfec-818adbf3e438",
+      "name": "Send a message",
+      "webhookId": "42c09bf2-40c1-4a52-9bec-04eba6c16f5c",
+      "credentials": {
+        "slackApi": {
+          "id": "BPpjGDxIURCLGX8Q",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "is within 7 days?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is within 7 days?": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "27aaa844-362a-48ff-859e-4e01664791f7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ba6d634883a0bd6d6ac7f273245e7fd458fbe1dd71b65f41c48f8d8f5a5996c"
+  },
+  "id": "AfLHsTr1EyvUKP8N",
+  "tags": []
+}

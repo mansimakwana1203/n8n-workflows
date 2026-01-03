@@ -1,0 +1,265 @@
+{
+  "name": "linkdin",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contract filder",
+        "formDescription": "=",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your search term?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your Location",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "88547ca6-ffe8-4447-a13b-85e27289774e",
+      "name": "On form submission",
+      "webhookId": "1b862a7e-b7d6-48fc-afc3-331c9566ebf2"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "BHzefUZlZRKWxkTck",
+          "mode": "list",
+          "cachedResultName": "🔥 LinkedIn Jobs Scraper (bebity/linkedin-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/BHzefUZlZRKWxkTck/input"
+        },
+        "customBody": "={\n  \"title\": {{ $json['What is your search term?'].toJsonString() }},\n  \"location\": {{ $json['What is your Location'].toJsonString() }},\n  \"companyName\": [],\n  \"contractType\": \"C\",\n  \"companyId\": [],\n  \"publishAt\": \"\",\n  \"rows\": 30,\n  \"proxy\": {\n    \"useApifyProxy\": true,\n    \"ApifyProxyGroups\": []\n  }\n}",
+        "authentication": "apifyOAuth2Api"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "89969995-b579-47ec-b262-247fb79824d6",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyOAuth2Api": {
+          "id": "S0GX4rs6wTjuQHOa",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Current job item\nconst item = $input.item.json;\n\n// Job description text (for email extraction)\nconst textContent = item.description || \"\";\n\n// Email regex\nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\n\n// Extract emails\nconst emails = textContent.match(emailRegex) || [];\n\n// Remove duplicate emails\nconst uniqueEmails = [...new Set(emails)];\n\n// Return BOTH email + company name\nreturn {\n  companyName: item.companyName || \"Not found\",\n  jobTitle: item.title || \"\",\n  location: item.location || \"\",\n  emails: uniqueEmails,\n  emailFound: uniqueEmails.length ,\n  jobUrl: item.jobUrl || \"\"\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "38b6601b-d564-44fe-9259-e02b6c50dc4e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ftmpNnbw77DJjn7wmBPXlZp_ktFOX8zKi5MILrocw0c",
+          "mode": "list",
+          "cachedResultName": "Linkdin",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftmpNnbw77DJjn7wmBPXlZp_ktFOX8zKi5MILrocw0c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ftmpNnbw77DJjn7wmBPXlZp_ktFOX8zKi5MILrocw0c/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Adress": "={{ $json.emails }}",
+            "comapny website": "={{ $json.jobUrl }}",
+            "Location": "={{ $json.location }}",
+            "Sector": "={{ $('Run an Actor and get dataset').item.json.sector }}",
+            "Comapny Name": "={{ $json.companyName }}",
+            "Job Apply URL": "={{ $json.jobUrl }}",
+            "Salary": "={{ $('Run an Actor and get dataset').item.json.salary }}",
+            "Experience": "={{ $('Run an Actor and get dataset').item.json.experienceLevel }}",
+            "work type ": "={{ $('Run an Actor and get dataset').item.json.workType }}"
+          },
+          "matchingColumns": [
+            "Email Adress"
+          ],
+          "schema": [
+            {
+              "id": "Email Adress",
+              "displayName": "Email Adress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Comapny Name",
+              "displayName": "Comapny Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "work type ",
+              "displayName": "work type ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sector",
+              "displayName": "Sector",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Experience",
+              "displayName": "Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Apply URL",
+              "displayName": "Job Apply URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Salary",
+              "displayName": "Salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "comapny website",
+              "displayName": "comapny website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e4351293-7eb9-48ba-885a-33e20a122aa5",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ewzesbyyIukzH2Ra",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "30c25b02-e532-4ddc-997c-d18a56f72317",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "09b5aa01123294c388505b08c18191f2979002f599cd2efbe824f7fb64f67fa5"
+  },
+  "id": "dPpD2PLTgqNwN5TZ",
+  "tags": []
+}

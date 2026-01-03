@@ -1,0 +1,1530 @@
+{
+  "name": "customer leads",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "contract filder",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your search term? ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What location you want?",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -816,
+        -48
+      ],
+      "id": "ef2e0ab0-4c08-4679-9016-d76565ceb82f",
+      "name": "On form submission",
+      "webhookId": "0b2516e9-a4b9-41f1-9c4e-857bf9713ccd"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=apify_api_5kn4fiOoHKOYqHz8znmpDBvhfDP50330g1Yp",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "apify_api_5kn4fiOoHKOYqHz8znmpDBvhfDP50330g1Yp"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"includeWebResults\": false,\n  \"language\": \"en\",\n  \"locationQuery\": \"{{ $json['What location you want?'] }}=\",\n  \"maxCrawledPlacesPerSearch\": 30,\n  \"maxImages\": 0,\n  \"maxReviews\": 0,\n  \"scrapeContacts\": false,\n  \"scrapeDirectories\": false,\n  \"scrapeImageAuthors\": false,\n  \"scrapePlaceDetailPage\": false,\n  \"scrapeReviewsPersonalData\": true,\n  \"scrapeTableReservationProvider\": false,\n  \"searchStringsArray\": [\n    \"{{ $json['What is your search term? '] }}=\"\n  ],\n  \"skipClosedPlaces\": false\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -608,
+        -48
+      ],
+      "id": "18fad33e-69db-400a-ac81-b08d075c2cda",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "phone",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -48
+      ],
+      "id": "b74748f9-73cd-46b9-b02b-8b38685cd5d0",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10rtxdSc99bE7XPutYCij2LpFCKCJ3UyduYdXwzsnU1o",
+          "mode": "list",
+          "cachedResultName": "Ai Lead",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10rtxdSc99bE7XPutYCij2LpFCKCJ3UyduYdXwzsnU1o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10rtxdSc99bE7XPutYCij2LpFCKCJ3UyduYdXwzsnU1o/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.toFormat('dd-MM-yyyy') }}\n",
+            "Titile": "={{ $json.title }}",
+            "City": "={{ $json.city }}",
+            "Address": "={{ $json.address }}",
+            "Totalscore": "={{ $json.totalScore }}",
+            "Place id": "={{ $json.placeId }}",
+            "Time": "={{ $now.toFormat('HH:mm:ss') }}\n",
+            "PermanentlyClosed": "={{ $json.permanentlyClosed ? 'YES' : 'NO' }}\n",
+            "Temporary closed": "={{ $json.temporarilyClosed ? 'yes' :'YES'}}\n",
+            "State": "={{ $json.state }}",
+            "Email": "=\n{{\n($json.body || '').match(\n/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/\n)?.[0] || ''\n}}\n\n",
+            "Website": "={{ $json.website }}",
+            "Title": "={{ $json.title }}",
+            "Phone no": "={{ \n  $json.phone \n    ? $json.phone.replace(/\\D/g, '') \n    : '' \n}}\n\n",
+            "Category ": "={{ $json.categories }}",
+            "customer id": "={{ $json.cid }}",
+            "Review count": "={{ $json.reviewsTags }}",
+            "Nearest place": "={{ $json.neighborhood }}",
+            "Facebook": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category ",
+              "displayName": "Category ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone no",
+              "displayName": "Phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Titile",
+              "displayName": "Titile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer id",
+              "displayName": "customer id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nearest place",
+              "displayName": "Nearest place",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Review count",
+              "displayName": "Review count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Totalscore",
+              "displayName": "Totalscore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Place id",
+              "displayName": "Place id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PermanentlyClosed",
+              "displayName": "PermanentlyClosed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Temporary closed",
+              "displayName": "Temporary closed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "instagram ",
+              "displayName": "instagram ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        -48
+      ],
+      "id": "426c5658-8a3e-4f25-b25c-337f367b37f2",
+      "name": "Append row in sheet",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ewzesbyyIukzH2Ra",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        624,
+        -48
+      ],
+      "id": "b70d8596-4d41-40fc-80ba-7a8000876e32",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "da1973d5-79a9-41c2-95df-a9da0233e022",
+              "leftValue": "={{ $json.Website }}",
+              "rightValue": "2.5",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -48
+      ],
+      "id": "0aa193cf-b0c4-4a21-a400-c50f6b175a9b",
+      "name": "Filter website"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v1/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer fc-7958a66ce05e4741848b8055e31d1f2b"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"url\": \"https://www.google.com/maps/place/S.R.+REAL+ESTATE\",\n  \"formats\": [\"markdown\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        880,
+        224
+      ],
+      "id": "b709d381-766a-4b80-a72f-8ff8d897ab5f",
+      "name": "Scrap website"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.data?.markdown ||\n  $json.data?.html ||\n  \"\";\n\nif (!text) {\n  return [{ email: \"NOT FOUND\" }];\n}\n\nconst emailRegex =\n  /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\n\nconst emails = text.match(emailRegex) || [];\n\nreturn [\n  {\n    email:\n      emails.length > 0\n        ? [...new Set(emails)]\n        : \"NOT FOUND\"\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        224
+      ],
+      "id": "ed38bed7-1979-46ed-adaa-432ef1f5ca3e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Example of proper delay calculation\nconst min = 2; // minimum seconds\nconst max = 3; // maximum seconds\nconst randomDelay = Math.random() * (max - min) + min;\n\nreturn[{randomDelay}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        240
+      ],
+      "id": "21498aad-6204-475a-840b-f66897fffb4a",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.randomDelay }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        224
+      ],
+      "id": "c417a668-cc48-480d-920d-723b512b6db1",
+      "name": "Wait",
+      "webhookId": "776ea391-d1c1-4f94-a7d8-501f544316b0"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        896,
+        -144
+      ],
+      "id": "cb9743db-0233-40b7-9a36-f84ef9d4ab35",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        48
+      ],
+      "id": "30f2f780-9657-4513-97fe-f5c828f1155b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qZD0dKhLHWiNetLD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert Real Estate Lead Research Assistant specializing in the Ahmedabad market. Your goal is to identify high-quality contact information for real estate agencies and brokers from the provided web data.\n\nYour Task:\n\nExtract the primary business email address. Skip 'sentry.io' or support emails for website builders.\n\nFind official social media handles (Facebook, Instagram, LinkedIn).\n\nIdentify if the business specializes in residential, commercial, or industrial real estate in Ahmedabad.\n\nIf no email is found, look for 'Contact Us' page patterns in the provided text.\n\nRules:\n\nOutput data in a clean, structured JSON format.\n\nIf a field is missing, return 'Not found'.\n\nIgnore generic Google Maps links; focus only on the business's unique identity   You are an expert Real Estate Lead Research Assistant specializing in the Ahmedabad market. Your task is to write professional, personalized cold emails for real estate.\n\n**Business Details:**\n- Business Name: {{ $('Append row in sheet').item.json.Title }}leads.\n- City:{{ $('Append row in sheet').item.json.City }}\n- Address:{{ $('Append row in sheet').item.json['Phone no'] }} \n- Website/Source: {{ $('Append row in sheet').item.json.Website }}\n- Phone: {{ $('Append row in sheet').item.json['Phone no'] }}\n- Customer Id:{{ $('Append row in sheet').item.json['customer id'] }}\n-Rating :{{ $('Append row in sheet').item.json.Totalscore }}\n\n**Instructions:**\n1. Generate a cold email to introduce our real estate services\n2. Personalize it using their business information\n3. Focus on how we can help them with property buying/selling/renting in Ahmedabad\n4. Keep it professional but friendly\n5. Include a clear call-to-action\n6. Make it 150-200 words maximum\n\n**Email Structure:**\n- Subject line (compelling and personalized)\n- Personalized greeting\n- Introduction (mention their business/location)\n- Value proposition (how we can help)\n- Specific services we offer\n- Call-to-action (schedule call, visit website, etc.)\n- Professional closing\n\n**Example Services to Mention:**\n- Property valuation\n- Buyer/seller representation\n- Rental property management\n- Investment property consulting\n- Market analysis\n- Legal documentation assistance\n\n**Tone:** Professional, helpful, non-pushy, knowledgeable about Ahmedabad real estate market.\n\n**Output Format:**\nReturn ONLY the email in this exact format:\nSUBJECT: [Your subject line here]\n\nDear [Business Name] Team,\n\n[Email body here]\n\nBest regards,\n[Felix System]\nReal Estate Consultant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        -144
+      ],
+      "id": "5963fb9c-325d-490f-9968-3bbd3c37daab",
+      "name": "Email Generator",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10rtxdSc99bE7XPutYCij2LpFCKCJ3UyduYdXwzsnU1o",
+          "mode": "list",
+          "cachedResultName": "Ai Lead",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10rtxdSc99bE7XPutYCij2LpFCKCJ3UyduYdXwzsnU1o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10rtxdSc99bE7XPutYCij2LpFCKCJ3UyduYdXwzsnU1o/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.toFormat('dd-MM-yyyy') }}\n",
+            "Titile": "={{ $json.title }}",
+            "City": "={{ $json.city }}",
+            "Address": "={{ $json.address }}",
+            "Totalscore": "={{ $json.totalScore }}",
+            "Place id": "={{ $json.placeId }}",
+            "Time": "={{ $now.toFormat('HH:mm:ss') }}\n",
+            "PermanentlyClosed": "={{ $json.permanentlyClosed ? 'YES' : 'NO' }}\n",
+            "Temporary closed": "={{ $json.temporarilyClosed ? 'yes' :'YES'}}\n",
+            "State": "={{ $json.state }}",
+            "Email": "={{ $json.email || '' }}\n\n",
+            "Website": "={{ $json.website }}",
+            "Title": "={{ $json.title }}",
+            "Phone no": "={{ $json.phoneUnformatted || $json.phone || 'NO_PHONE' }}\n",
+            "Category ": "={{ $json.categories }}",
+            "customer id": "={{ $json.cid }}",
+            "Review count": "={{ $json.reviewsTags }}",
+            "Nearest place": "={{ $json.neighborhood }}",
+            "Facebook": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category ",
+              "displayName": "Category ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone no",
+              "displayName": "Phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Titile",
+              "displayName": "Titile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "State",
+              "displayName": "State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer id",
+              "displayName": "customer id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nearest place",
+              "displayName": "Nearest place",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Review count",
+              "displayName": "Review count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Totalscore",
+              "displayName": "Totalscore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Place id",
+              "displayName": "Place id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PermanentlyClosed",
+              "displayName": "PermanentlyClosed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Temporary closed",
+              "displayName": "Temporary closed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Youtube",
+              "displayName": "Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "instagram ",
+              "displayName": "instagram ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1536,
+        -144
+      ],
+      "id": "9af1c2d1-ce9b-4090-a898-23f2d57d8c5f",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ewzesbyyIukzH2Ra",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mansifelix12@gmail.com",
+        "subject": "=The leads  \" {{ $('On form submission').item.json['What is your search term? '] }}\" in {{ $('On form submission').item.json['What location you want?'] }} is complete",
+        "emailType": "text",
+        "message": "=The leads  \" {{ $('On form submission').item.json['What is your search term? '] }}\" in {{ $('On form submission').item.json['What location you want?'] }} is complete",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        -288
+      ],
+      "id": "fc48e513-02b8-4c0e-bdc2-2b5e894b56b5",
+      "name": "Send a message",
+      "webhookId": "4f4f74b7-4ff2-4b2d-804b-e4a37fc4d481",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Vt0E9M0YMb5KKQSS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "caa6ba14-6c35-42ff-91fc-7f4d21c52a22",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "9185bb2d-ae2e-4c6b-ba8a-bd9e2ff9ec77",
+              "name": "website",
+              "value": "={{ $json.website }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        -48
+      ],
+      "id": "12ac3b85-791a-4155-b21b-73caf02e727b",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "Append row in sheet1": [
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "S.R. REAL ESTATE",
+          "City": "Ahmedabad",
+          "Address": "Gate No, Shop No. 137 In Pavan Transport Nr. Jugaldas Chal No. 7, 1, Idgah Rd, opp. City center, Shahibag, Ahmedabad, Gujarat 380016, India",
+          "Totalscore": 4.6,
+          "Place id": "ChIJIQ-zGa-FXjkRIokk0WDGiR8",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=S.R.%20REAL%20ESTATE&query_place_id=ChIJIQ-zGa-FXjkRIokk0WDGiR8",
+          "Title": "S.R. REAL ESTATE",
+          "Phone no": "+919106481006\n",
+          "Category ": [
+            "Real estate agent"
+          ],
+          "customer id": "2272565606113118498",
+          "Review count": [],
+          "Nearest place": "Prem Darwaza, Shahibag"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "MiSSKA - The Real Estate Company",
+          "City": "Ahmedabad",
+          "Address": "Sumel Business Park, 6 A-321, Dudheshwar Rd, Shahibag, Ahmedabad, Gujarat 380004, India",
+          "Totalscore": 5,
+          "Place id": "ChIJWVwjuUKFXjkR5jZOc5zJO0E",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=MiSSKA%20-%20The%20Real%20Estate%20Company&query_place_id=ChIJWVwjuUKFXjkR5jZOc5zJO0E",
+          "Title": "MiSSKA - The Real Estate Company",
+          "Phone no": "+918905904939\n",
+          "Category ": [
+            "Real estate consultant"
+          ],
+          "customer id": "4700572309877831398",
+          "Review count": [],
+          "Nearest place": "Shahibag"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Shayona estate",
+          "City": "Ahmedabad",
+          "Address": "I-8 Dudheshwar Rd Dariyapur Kirti Kunj Society Tavdipura, Kazipur, Kirti Kunj Society, Tavdipura, Kazipur Dariyapur, Ahmedabad, Gujarat 380004, India",
+          "Totalscore": 3.9,
+          "Place id": "ChIJ202qLGqEXjkRx4-UQzdyVcQ",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=Shayona%20estate&query_place_id=ChIJ202qLGqEXjkRx4-UQzdyVcQ",
+          "Title": "Shayona estate",
+          "Phone no": "NO_PHONE\n",
+          "Category ": [
+            "Real estate agency"
+          ],
+          "customer id": "14147339386136858567",
+          "Review count": [],
+          "Nearest place": "Kirti Kunj Society, Tavdipura, Kazipur Dariyapur"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Bharat Bhai Real Estate Consultant",
+          "City": "Ahmedabad",
+          "Address": "1, Road, near Dariyapur, Bardolpura, Madhupura, Ahmedabad, Gujarat 380016, India",
+          "Totalscore": 5,
+          "Place id": "ChIJTTDlBj-EXjkRoJAQhumn510",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=Bharat%20Bhai%20Real%20Estate%20Consultant&query_place_id=ChIJTTDlBj-EXjkRoJAQhumn510",
+          "Title": "Bharat Bhai Real Estate Consultant",
+          "Phone no": "+919327211386\n",
+          "Category ": [
+            "Real estate agency"
+          ],
+          "customer id": "6766561586565910688",
+          "Review count": [],
+          "Nearest place": "Bardolpura, Madhupura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "JAGU ESTATE BROKER",
+          "City": "Ahmedabad",
+          "Address": "Sumel Business Park, E-15, Tavdipura Rd, Dudheshwar, Shahibag, Ahmedabad, Gujarat 380004, India",
+          "Totalscore": 3.3,
+          "Place id": "ChIJD_Z2byiFXjkRSNDvKeWhWxo",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=JAGU%20ESTATE%20BROKER&query_place_id=ChIJD_Z2byiFXjkRSNDvKeWhWxo",
+          "Title": "JAGU ESTATE BROKER",
+          "Phone no": "+918866484848\n",
+          "Category ": [
+            "Office space rental agency",
+            "Construction company"
+          ],
+          "customer id": "1899289673489961032",
+          "Review count": [],
+          "Nearest place": "Dudheshwar, Shahibag"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "JAIN PROPERTIES Rent Agreement, Lease Agreement, Rentals & Resale, DOOR STEP SERVICES veritastheteam",
+          "City": "Ahmedabad",
+          "Address": "B/127, nr. Reliance Mall, opp. Swaminarayan Temple, Shahibag, Ahmedabad, Gujarat 380004, India",
+          "Totalscore": 4.2,
+          "Place id": "ChIJVRN6XWuEXjkRC3p53b7IiP8",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "http://www.veritastheteam.com/",
+          "Title": "JAIN PROPERTIES Rent Agreement, Lease Agreement, Rentals & Resale, DOOR STEP SERVICES veritastheteam",
+          "Phone no": "+917940099917\n",
+          "Category ": [
+            "Real estate agency",
+            "Financial planner",
+            "Legal services",
+            "Passport agent",
+            "Real estate attorney"
+          ],
+          "customer id": "18413187798589340171",
+          "Review count": [],
+          "Nearest place": "Shahibag"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Kodumax Real Estate Company",
+          "City": "Ahmedabad",
+          "Address": "A/418,4th Floor Abhisekh Complex-1, Asarwa, Ahmedabad, Gujarat 380016, India",
+          "Totalscore": 4.9,
+          "Place id": "ChIJ8YbwVe2FXjkRIV8SwBT62FQ",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.99hogar.com/",
+          "Title": "Kodumax Real Estate Company",
+          "Phone no": "+918401483116\n",
+          "Category ": [
+            "Real estate consultant"
+          ],
+          "customer id": "6113911461184167713",
+          "Review count": [],
+          "Nearest place": "Jahangirpura, Asarwa"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Shreem Group Of Companies",
+          "City": "Ahmedabad",
+          "Address": "3rd Floor, Solitaire Building, Shahibaug, opp. Bombay Garage, Ahmedabad, Gujarat 380004, India",
+          "Totalscore": 3,
+          "Place id": "ChIJE34UR22EXjkRm2WK4BP7ElI",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "http://www.shreemdevelopers.com/",
+          "Title": "Shreem Group Of Companies",
+          "Phone no": "+919638800707\n",
+          "Category ": [
+            "Real estate agency",
+            "Chemical manufacturer",
+            "Investment service",
+            "Textiles"
+          ],
+          "customer id": "5914065323480999323",
+          "Review count": [],
+          "Nearest place": "Mahavir Kutir Society, Jain Colony, Shahibag"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Divya Estate Management | Industrial Land Consultant in Ahmedabad | Industrial Shed & Warehouse for Rent / Lease",
+          "City": "Ahmedabad",
+          "Address": "B – 1015, 1016, Sun Westbank, Ashram Rd, Vishalpur, Muslim Society, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 5,
+          "Place id": "ChIJkYpZGAiFXjkR2Neo2YmONXI",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "http://www.divyaestate.com/",
+          "Title": "Divya Estate Management | Industrial Land Consultant in Ahmedabad | Industrial Shed & Warehouse for Rent / Lease",
+          "Phone no": "+919825249510\n",
+          "Category ": [
+            "Industrial real estate agency",
+            "Industrial consultant"
+          ],
+          "customer id": "8229640616802834392",
+          "Review count": [],
+          "Nearest place": "Vishalpur, Muslim Society, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "SAMIR ESTATES",
+          "City": "Ahmedabad",
+          "Address": "A block 1040, Sun West Bank, Ashram Rd, opposite City Gold Cinema, Vishalpur, Muslim Society, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 5,
+          "Place id": "ChIJx342QnCFXjkRSv3nI7vQxEg",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.facebook.com/profile.php?id=100064163220210&mibextid=ZbWKwL",
+          "Title": "SAMIR ESTATES",
+          "Phone no": "+919377700022\n",
+          "Category ": [
+            "Real estate consultant",
+            "Commercial real estate agency",
+            "Property investment company",
+            "Property management company",
+            "Real estate agent",
+            "Real estate rental agency",
+            "Retail space rental agency"
+          ],
+          "customer id": "5243545368345967946",
+          "Review count": [],
+          "Nearest place": "Vishalpur, Muslim Society, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "KD Realty",
+          "City": "Ahmedabad",
+          "Address": "Top Floor, Swayam Complex, Vipul Dudhiya Lane, Stadium Cross Rd, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 4.9,
+          "Place id": "ChIJhfZJbIuEXjkR-BePerV_l3U",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=KD%20Realty&query_place_id=ChIJhfZJbIuEXjkR-BePerV_l3U",
+          "Title": "KD Realty",
+          "Phone no": "+919824539108\n",
+          "Category ": [
+            "Real estate agency"
+          ],
+          "customer id": "8473381641342883832",
+          "Review count": [],
+          "Nearest place": "Kamla Society, Hindu Colony, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "V A REAL ESTATE",
+          "City": "Ahmedabad",
+          "Address": "Titanium city center mall, Seema hall, near AAYAKAR BHAWAN, Shreyas Colony, Satellite, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 5,
+          "Place id": "ChIJI10ZdFqDXjkRNlR2n1qTowM",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=V%20A%20REAL%20ESTATE&query_place_id=ChIJI10ZdFqDXjkRNlR2n1qTowM",
+          "Title": "V A REAL ESTATE",
+          "Phone no": "+918000058202\n",
+          "Category ": [
+            "Real estate agent",
+            "Construction company"
+          ],
+          "customer id": "262215220749292598",
+          "Review count": [],
+          "Nearest place": "Shreyas Colony, Satellite"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Nirman Real Estate | Properties on buy and Rent",
+          "City": "Ahmedabad",
+          "Address": "GF-12 Virvijay Society, Nr. Sanghvi School, Naranpura, Ahmedabad, Gujarat 380013, India",
+          "Totalscore": 5,
+          "Place id": "ChIJU25HBISEXjkRzfWcPiWtP6U",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=Nirman%20Real%20Estate%20%7C%20Properties%20on%20buy%20and%20Rent&query_place_id=ChIJU25HBISEXjkRzfWcPiWtP6U",
+          "Title": "Nirman Real Estate | Properties on buy and Rent",
+          "Phone no": "+919601772777\n",
+          "Category ": [
+            "Construction company",
+            "Industrial real estate agency",
+            "Retail space rental agency"
+          ],
+          "customer id": "11907426315266749901",
+          "Review count": [],
+          "Nearest place": "Sundar Nagar, Naranpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "1squarefeet",
+          "City": "Ahmedabad",
+          "Address": "HK House, 404, Ashram Rd, opp. Bata Showroom, Usmanpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 5,
+          "Place id": "ChIJ6_MqjvAS9iIR_gAKjNVbvpw",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.1squarefeet.co.in/",
+          "Title": "1squarefeet",
+          "Phone no": "+919106434196\n",
+          "Category ": [
+            "Real estate consultant",
+            "Industrial real estate agency",
+            "Loan agency",
+            "Property investment company",
+            "Property maintenance",
+            "Property management company",
+            "Real estate rental agency"
+          ],
+          "customer id": "11294565888227410174",
+          "Review count": [],
+          "Nearest place": "Usmanpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "V K Property",
+          "City": "Ahmedabad",
+          "Address": "Near, Ff-09 Hirapanna complex, Stadium Cross Rd, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Place id": "ChIJxamzUN-FXjkRhSip1UVLdtg",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=V%20K%20Property&query_place_id=ChIJxamzUN-FXjkRhSip1UVLdtg",
+          "Title": "V K Property",
+          "Phone no": "+919033006974\n",
+          "Category ": [
+            "Real estate agent",
+            "Commercial real estate agency",
+            "Construction company",
+            "Industrial real estate agency",
+            "Office space rental agency",
+            "Property management company",
+            "Real estate consultant",
+            "Real estate rental agency",
+            "Retail space rental agency"
+          ],
+          "customer id": "15597737122753751173",
+          "Review count": [],
+          "Nearest place": "Navarangpura Gam, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "A-One Consultant",
+          "City": "Ahmedabad",
+          "Address": "4, Kamdhenu Complex, Opposite Samved Hospital, Stadium Circle, By Commerce Road, Navrangpura, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 4,
+          "Place id": "ChIJV_c0DI2EXjkRalmJnxxudtc",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=A-One%20Consultant&query_place_id=ChIJV_c0DI2EXjkRalmJnxxudtc",
+          "Title": "A-One Consultant",
+          "Phone no": "+919376712344\n",
+          "Category ": [
+            "Real estate consultant"
+          ],
+          "customer id": "15525717834621081962",
+          "Review count": [],
+          "Nearest place": "Navarangpura Gam, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "JD Group",
+          "City": "Ahmedabad",
+          "Address": "304, 3rd floor, nr. Choice Restaurant, Swastik Society, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 4,
+          "Place id": "ChIJ7Q_NTXmFXjkRXJLMWID-6Sg",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=JD%20Group&query_place_id=ChIJ7Q_NTXmFXjkRXJLMWID-6Sg",
+          "Title": "JD Group",
+          "Phone no": "+919327072217\n",
+          "Category ": [
+            "Industrial real estate agency"
+          ],
+          "customer id": "2948167258289771100",
+          "Review count": [],
+          "Nearest place": "Swastik Society, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Home Loan Walla",
+          "City": "Ahmedabad",
+          "Address": "Om Complex, Swastik Cross Road, Before Domino's Pizza, Chimanlal Girdharlal Rd, Gujarat 380009, India",
+          "Totalscore": 5,
+          "Place id": "ChIJZ4icgYSFXjkRWX9fHaGJ1Ic",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.facebook.com/profile.php?id=100090641293602",
+          "Title": "Home Loan Walla",
+          "Phone no": "+918866667001\n",
+          "Category ": [
+            "Car finance and loan company",
+            "Real estate consultant"
+          ],
+          "customer id": "9787599215258468185",
+          "Review count": [],
+          "Nearest place": "Swastik Society, Navrangpura"
+        }
+      },
+      {
+        "json": {
+          "Date": "18-12-2025\n",
+          "Titile": "Shivam Estate",
+          "City": "Ahmedabad",
+          "Address": "Ushakiran Appartment, 2, opposite Ishita Tower Road, Girivar Society, Navrangpura, Ahmedabad, Gujarat 380009, India",
+          "Totalscore": 5,
+          "Place id": "ChIJQXjbQ5GFXjkR0nrlpdWZ3T8",
+          "Time": "14:55:08\n",
+          "PermanentlyClosed": "NO\n",
+          "Temporary closed": "YES\n",
+          "State": "Gujarat",
+          "Email": "\n\n",
+          "Website": "https://www.google.com/maps/search/?api=1&query=Shivam%20Estate&query_place_id=ChIJQXjbQ5GFXjkR0nrlpdWZ3T8",
+          "Title": "Shivam Estate",
+          "Phone no": "+919825549563\n",
+          "Category ": [
+            "Real estate consultant"
+          ],
+          "customer id": "4602003537132878546",
+          "Review count": [],
+          "Nearest place": "Girivar Society, Navrangpura"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrap website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter website": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrap website": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Generator": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "e80be0d8-9a05-4cbd-8538-6f515e7591a5",
+  "meta": {
+    "templateId": "ready-to-run-ai-workflow",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "09b5aa01123294c388505b08c18191f2979002f599cd2efbe824f7fb64f67fa5"
+  },
+  "id": "oNgL2DoA9pSIw33S",
+  "tags": []
+}

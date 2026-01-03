@@ -1,0 +1,306 @@
+{
+  "name": "Chat Auto",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}\n",
+        "options": {
+          "systemMessage": "You are a WhatsApp Auto-Reply AI Assistant for Felix IT Systems.\nAlways use available tools before replying.\nChoose the correct tool based on the user's message.\nReply in short, friendly WhatsApp-style messages. You are a WhatsApp Auto-Reply AI Assistant for Felix IT Systems.\n\nYour job is to understand the user's message and respond accurately.\n\nRules:\n- Always use available tools before replying.\n- Choose the correct tool based on keywords:\n  • Fees / price / cost → get_fees\n  • Placement / job / salary / package → get_placement\n  • Contact / phone / address → get_contact\n  • Demo / trial / class → get_demo\n- Respond in short, friendly, WhatsApp-style messages.\n- If data comes from Google Sheets, format it cleanly.\n- If the user asks multiple things, answer clearly step by step. \nYou are a course counsellor AI.\n\nWhen a user asks about placement, jobs, salary, hiring support, career guidance, or UI/UX placement:\n- Call the get_placement tool.\n- Read the PLACEMENT sheet data carefully.\n- Reply in simple, friendly, and professional language.\n- Keep the answer short (4–6 lines).\n- Highlight placement support, companies, roles, and salary range.\n- If user shows interest, politely ask if they want demo or contact details.\n- Do NOT invent information. Answer only from the sheet data.\nYour job is to understand the user's message and choose the correct tool.\n\nRules:\n- If the user asks about fees, price, cost, course fees → use get_fees tool.\n- If the user asks about placement, job, salary, hiring, career → use get_placement tool.\n- If the user asks about contact details, phone number, email, address, WhatsApp → use get_contact tool.\n- If the user asks about demo, trial class, free class → use get_demo tool.\n- If the message matches keywords → use keywords_lookup tool.\n- If no tool matches, reply politely and ask what information they want.\n\nResponse Style:\n- Reply in short, friendly WhatsApp-style messages.\n- Use simple English.\n- Be polite and professional.\n- End replies with a follow-up question.\n\nFormatting:\n- Use bullet points and emojis where helpful.\n- Do not mention tools or internal system.\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        64
+      ],
+      "id": "5ad1aca5-fa1f-4ef6-baeb-1176f5e00f64",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 25
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1200,
+        272
+      ],
+      "id": "2b7c7e2e-b1a3-46c9-9d4f-7c95b7d7b4bc",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool FIRST to understand the user's intent.\nIt contains keywords like fees, course, placement, demo, contact.\nAlways check this before answering.\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8",
+          "mode": "list",
+          "cachedResultName": "felix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "KEYWORDS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1616,
+        304
+      ],
+      "id": "9b7b667e-b9d2-412d-a921-e74feb9304b0",
+      "name": "tool_keywords",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool ONLY when the user asks about:\n- course fees\n- price, cost\n- course details with fees\n- how much is the course\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8",
+          "mode": "list",
+          "cachedResultName": "felix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 828968986,
+          "mode": "list",
+          "cachedResultName": "Course/FEES",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit#gid=828968986"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        320
+      ],
+      "id": "6e423187-0f3d-4ef5-95f3-58db8a0be95a",
+      "name": "tool_course_fees",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool when the user asks about placement, jobs, salary, package, career support, hiring companies, or job assistance for any course. \nFetch placement details from Google Sheets and respond clearly with average package, maximum package, placement support, and company names.\n📊 UI/UX Placement Support\n\n✔ Avg Package: 4–6 LPA\n✔ Highest Package: 10 LPA\n✔ Hiring Companies:\n✔ Support: Resume, portfolio & interview prep\n\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8",
+          "mode": "list",
+          "cachedResultName": "felix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 463998364,
+          "mode": "list",
+          "cachedResultName": "PLACEMENT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit#gid=463998364"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1456,
+        304
+      ],
+      "id": "a3c58948-0464-4bd1-8b69-2af425a36e5a",
+      "name": "get_placement",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "📞 Contact Details – Felix IT Systems\n\nPhone: 88888 88888\nWhatsApp: 88888 88888\nEmail: info@felixitsystems.com\nAddress: Ahmedabad.",
+        "documentId": {
+          "__rl": true,
+          "value": "1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8",
+          "mode": "list",
+          "cachedResultName": "felix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 301115666,
+          "mode": "list",
+          "cachedResultName": "CONTACT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit#gid=301115666"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1808,
+        208
+      ],
+      "id": "2522574f-7536-4201-a043-325e51fc8f01",
+      "name": "get_contact",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "364a9087-9e4b-44f9-9b9d-d3a06ec73029",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        992,
+        64
+      ],
+      "id": "d5056f01-c21f-4d0d-a3d4-20b8562bd07d",
+      "name": "Webhook",
+      "webhookId": "364a9087-9e4b-44f9-9b9d-d3a06ec73029"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        288
+      ],
+      "id": "54f7f33c-629f-4ca1-ae6e-baa590e1e3ea",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fTY8SXy1kqALUvx4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "tool_keywords": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tool_course_fees": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_placement": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7de0e8c9-d4af-4327-a708-7afae4663a04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ba6d634883a0bd6d6ac7f273245e7fd458fbe1dd71b65f41c48f8d8f5a5996c"
+  },
+  "id": "nEsA7x6KtMCVaKsj",
+  "tags": []
+}

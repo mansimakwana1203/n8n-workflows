@@ -1,0 +1,393 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contract filder",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your search term?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your Location",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "77e884d6-66cc-479c-9222-daafb6aee5d6",
+      "name": "On form submission",
+      "webhookId": "383c5ad2-d8dd-4a1d-bbf3-20b6cfe413be"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorId": {
+          "__rl": true,
+          "value": "BHzefUZlZRKWxkTck",
+          "mode": "list",
+          "cachedResultName": "🔥 LinkedIn Jobs Scraper (bebity/linkedin-jobs-scraper)",
+          "cachedResultUrl": "https://console.apify.com/actors/BHzefUZlZRKWxkTck/input"
+        },
+        "customBody": "={\n  \"title\": \"{{ $json['What is your search term?'] }}\",\n  \"location\": \"{{ $json['What is your Location'] }}\",\n  \"companyName\": [],\n  \"contractType\": \"C\",\n  \"companyId\": [],\n  \"publishAt\": \"\",\n  \"rows\": 20,\n  \"proxy\": {\n    \"useApifyProxy\": true,\n    \"ApifyProxyGroups\": []\n  }\n}",
+        "memory": 2048
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c6308961-d58c-44e4-83ed-b2e1383bdd85",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyApi": {
+          "id": "olfINzqPtX7eHC94",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 15
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "83853fb8-e385-4bce-a485-1ceb0e4ebaa2",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "12WzuzQGIBH4RYD53VcBgb22O1camaIPbq3NVgYTC8HU",
+          "mode": "list",
+          "cachedResultName": "Linkdin",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12WzuzQGIBH4RYD53VcBgb22O1camaIPbq3NVgYTC8HU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12WzuzQGIBH4RYD53VcBgb22O1camaIPbq3NVgYTC8HU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Adress": "={{ $('Code in JavaScript').item.json.emails }}",
+            "Comapny Name": "={{ $('Code in JavaScript').item.json.companyName }}",
+            "comapny website": "={{ $('Code in JavaScript').item.json.jobUrl }}",
+            "Sector": "={{ $('Code in JavaScript').item.json.jobTitle }}",
+            "Job Apply URL": "={{ $('Code in JavaScript').item.json.jobUrl }}",
+            "Job Description": "={{ $('Run an Actor and get dataset').item.json.description }}",
+            "Experience": "={{ $('Run an Actor and get dataset').item.json.experienceLevel }}"
+          },
+          "matchingColumns": [
+            "Email Adress"
+          ],
+          "schema": [
+            {
+              "id": "Email Adress",
+              "displayName": "Email Adress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Comapny Name",
+              "displayName": "Comapny Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "comapny website",
+              "displayName": "comapny website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sector",
+              "displayName": "Sector",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Experience",
+              "displayName": "Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Apply URL",
+              "displayName": "Job Apply URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1936,
+        32
+      ],
+      "id": "fb368b5f-1e4f-4702-8a9b-69f51a520b7e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Current job item\nconst item = $input.item.json;\n\n// Job description text (for email extraction)\nconst textContent = item.description || \"\";\n\n// Email regex\nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\n\n// Extract emails\nconst emails = textContent.match(emailRegex) || [];\n\n// Remove duplicate emails\nconst uniqueEmails = [...new Set(emails)];\n\n// Return BOTH email + company name\nreturn {\n  companyName: item.companyName || \"Not found\",\n  jobTitle: item.title || \"\",\n  location: item.location || \"\",\n  emails: uniqueEmails,\n  emailFound: uniqueEmails.length > 0,\n  jobUrl: item.jobUrl || \"\"\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "10575823-4273-4ca7-80db-157587998879",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Run an Actor and get dataset').item.json.companyUrl }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1152,
+        80
+      ],
+      "id": "60ec69f5-58bc-4d8c-ac59-88220d93a406",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1696,
+        32
+      ],
+      "id": "47758161-757e-40db-b43b-a2db7c231eae",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d9716611-5da7-4260-af72-d072b649aacf",
+              "name": "companyName",
+              "value": "={{ $('Run an Actor and get dataset').item.json.companyName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        144
+      ],
+      "id": "069ee529-75c7-4b27-9b46-c0337820e4f5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        864,
+        0
+      ],
+      "id": "e9b3e24d-328f-44a9-be5d-553fc0941f4e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Current job item\nconst item = $input.item.json;\n\n// Job description text (for email extraction)\nconst textContent = item.description || \"\";\n\n// Email regex\nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\n\n// Extract emails\nconst emails = textContent.match(emailRegex) || [];\n\n// Remove duplicate emails\nconst uniqueEmails = [...new Set(emails)];\n\n// Return BOTH email + company name\nreturn {\n  companyName: item.companyName || \"Not found\",\n  jobTitle: item.title || \"\",\n  location: item.location || \"\",\n  emails: uniqueEmails,\n  emailFound: uniqueEmails.length > 0,\n  jobUrl: item.jobUrl || \"\"\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        -64
+      ],
+      "id": "8eadcde9-e3f7-4540-8964-0141bbe0514a",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "185ef884-3109-4b9d-8e63-b567162719a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ba6d634883a0bd6d6ac7f273245e7fd458fbe1dd71b65f41c48f8d8f5a5996c"
+  },
+  "id": "tNpqhNXS7HQbjrXM",
+  "tags": []
+}

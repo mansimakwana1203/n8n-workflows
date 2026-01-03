@@ -1,0 +1,179 @@
+{
+  "name": "new 1",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8",
+          "mode": "list",
+          "cachedResultName": "felix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "KEYWORDS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        160
+      ],
+      "id": "da488f64-c9c8-48fa-aef6-bd714b9f79d8",
+      "name": "keywords",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8",
+          "mode": "list",
+          "cachedResultName": "felix",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 828968986,
+          "mode": "list",
+          "cachedResultName": "Course/FEES",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-A3hvbBM3l8NXufngbZuLb7KnqZlZxLyZGpmM6H4Ub8/edit#gid=828968986"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        208
+      ],
+      "id": "f7527301-62da-4c50-bff6-4423d7da9d95",
+      "name": "fees",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mTU9OpkFI14zkzPo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "951da241-3eb5-4563-a714-ad20617eb41c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fTY8SXy1kqALUvx4",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a WhatsApp Auto-Reply AI Assistant for Felix IT Systems. Always behave like a friendly WhatsApp chat and reply in short, simple, conversational lines. Based on the user message, choose the correct tool. If the message mentions fees, fee, price, cost, charges, or similar terms, use the “get fees” tool and then reply: “Here are the fees. If you want fees for a specific course, please tell me the course name.” If the message mentions placement, job, career, hiring, salary or package, use the “get placement” tool and then say: “Here are our placement details. Tell me the course name if you want course-wise placement info.” If the message includes demo, class, lecture, trial or session, use the “get demo” tool and then send: “Here is the demo link. Which course demo do you want?” If the message contains contact, phone, number, call, address, location or map, use the “get contact” tool and reply: “Here are our contact details.” If the user requests “only number”, respond only with: “Felix IT Systems Contact: +91 00000 00000.” If the message contains ui ux, uiux, design course or ux course, use the “get uiux” tool and then say: “Here are the UI/UX course details. Do you want fees or placement also?” If the message contains hi, hello, hey, info, information or about, send the welcome message: “Hello 👋 Welcome to Felix IT Systems! Please tell me what you want: Fees / Placement / Demo / UIUX / Contact.” If the user asks for course names or says “which course?”, reply with: “Available courses: UI/UX Design, Full Stack Development, Data Science, Python, Testing, AI/ML. Tell me your course name to get fees and placement details.” If the request is unclear, reply: “I didn’t understand clearly. Please tell me what you need: Fees / Placement / Demo / Contact / UIUX.” Always keep replies short like WhatsApp messages, never long paragraphs, and after sending tool results, ask the next helpful question when needed.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5e55fa34-2311-4b5f-b521-302576139ad7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Felix .\n How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "058fd9ac-c99b-4e2f-b072-46216718e1a5",
+      "name": "When chat message received",
+      "webhookId": "704dab7f-e13d-4068-9fca-f1d4062afda3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "keywords": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fees": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ed5af627-8781-4116-a351-ce8607982993",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1ba6d634883a0bd6d6ac7f273245e7fd458fbe1dd71b65f41c48f8d8f5a5996c"
+  },
+  "id": "vCpKbqCfQa0cNGv7",
+  "tags": []
+}

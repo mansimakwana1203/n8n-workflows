@@ -1,0 +1,392 @@
+{
+  "name": "Dr Appoinment",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Doctor Appointment Booking",
+        "formDescription": "Please provide your details and symptoms so we can schedule your appointment with doctor and send you\nmedicine reminders via email, SMS, or WhatsApp.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your name?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "List Your Symptoms",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email address",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Preffered Appoinment Time",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "10:00 AM to 12:00 PM (Dr.Aman)MBBS"
+                  },
+                  {
+                    "option": "12:00 PM to 2:00 PM (Dr.Mansi)MBBS"
+                  },
+                  {
+                    "option": "3:00 PM to 5:00 PM (Dr.Roshni)MBBS"
+                  },
+                  {
+                    "option": "6:00 PM to 8:00 PM (Dr.Vaibhav) MBBS"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Best your contact number",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Date",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Dr.Name",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Dr.Aman"
+                  },
+                  {
+                    "option": "Dr.Mansi"
+                  },
+                  {
+                    "option": "Dr.Roshni"
+                  },
+                  {
+                    "option": "Dr.Vaibhav"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        192
+      ],
+      "id": "3044642a-7fa3-477c-97f1-b9c2eca7cce9",
+      "name": "On form submission",
+      "webhookId": "0e8222c6-8c55-4483-bef4-a95a4712da4a"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "manyafelix88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "manyafelix88@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        192
+      ],
+      "id": "988a1481-a056-4a0c-b25f-0c8eb4c83a6e",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "4C1u9NxPyOD6E3iD",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['Email address'] }}",
+        "subject": "Appointment Confirmation – VED Hospital",
+        "emailType": "text",
+        "message": "=Hello{{ $('On form submission').item.json['What is your name?'] }} , \nYour appointment has been successfully booked. \n🩺 Doctor:{{ $('On form submission').item.json['Dr.Name'] }} \n📅 Date: {{ $('On form submission').item.json.Date }}\n\n⏰ Time:{{ $('On form submission').item.json['Preffered Appoinment Time'] }}\n\nPlease arrive 10 minutes early. \n\nRegards, \nVED Anorectal & General Hospital",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        192
+      ],
+      "id": "a533483b-ca4b-4ee8-94e1-c062efd67dca",
+      "name": "Patient mail",
+      "webhookId": "f9d7ecc7-4d23-4bcc-ae4c-a2093d9f6528",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fSAcPEsWVaZX4dMx",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "manyafelix88@gmail.com",
+        "subject": "New Appointment Booked",
+        "emailType": "text",
+        "message": "=New Appoinment Booked .\nPatient Name: {{ $('On form submission').item.json['What is your name?'] }} , \n\nPatient Email: {{ $('On form submission').item.json['Email address'] }}\n\nPhone: {{ $('On form submission').item.json['Best your contact number'] }}\n\nDoctor Name:{{ $('On form submission').item.json['Dr.Name'] }} \n📅 Date: {{ $('On form submission').item.json.Date }}\n\n⏰ Time:{{ $('On form submission').item.json['Preffered Appoinment Time'] }}\n\nPlease arrive 10 minutes early. \n\nRegards, \nVED Anorectal & General Hospital",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        192
+      ],
+      "id": "8a903d0f-8d15-4d35-9bab-2d19fcc1ceba",
+      "name": "Dr.Mail",
+      "webhookId": "f9d7ecc7-4d23-4bcc-ae4c-a2093d9f6528",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fSAcPEsWVaZX4dMx",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1gaA4JxRZ5sqh57kokdqJW_R4xuYZ7Vpi3NL-JqpqeYE",
+          "mode": "list",
+          "cachedResultName": "Doctor_Appointments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gaA4JxRZ5sqh57kokdqJW_R4xuYZ7Vpi3NL-JqpqeYE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Patient name",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gaA4JxRZ5sqh57kokdqJW_R4xuYZ7Vpi3NL-JqpqeYE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Patient Name": "={{ $('On form submission').item.json['What is your name?'] }}",
+            "Email": "={{ $('On form submission').item.json['Email address'] }}",
+            "Phone no": "={{ $('On form submission').item.json['Best your contact number'] }}",
+            "Date": "={{ $('On form submission').item.json.Date }}",
+            "Doctor": "={{ $('On form submission').item.json['Dr.Name'] }}",
+            "Time": "={{ $('On form submission').item.json['Preffered Appoinment Time'] }}",
+            "Symptoms": "={{ $('On form submission').item.json['List Your Symptoms'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone no",
+              "displayName": "Phone no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Doctor",
+              "displayName": "Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Symptoms",
+              "displayName": "Symptoms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2272,
+        192
+      ],
+      "id": "f29e6f36-9c65-45cc-bfac-6a032abce581",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tVcy05NnQI5D85VB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['Email address'] }}",
+        "subject": "⏰ Appointment Reminder – VED Hospital",
+        "emailType": "text",
+        "message": "=Hello{{ $('On form submission').item.json['What is your name?'] }}.\n\n⏰ This is a reminder for your appointment. 🩺 Doctor:{{ $('On form submission').item.json['Dr.Name'] }} \n📅 Date:{{ $('On form submission').item.json.Date }} \n⏰ Time:{{ $('On form submission').item.json['Preffered Appoinment Time'] }}\n📍 VED Anorectal & General Hospital \n\nPlease arrive 10 minutes early.  \nRegards,\nVED Hospital Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        192
+      ],
+      "id": "38de719b-e463-43fb-9368-0e031673e2ab",
+      "name": "Reminder Mail",
+      "webhookId": "7d2d3397-8f3b-43fc-9ce7-1ec60d353bed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fSAcPEsWVaZX4dMx",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1648,
+        192
+      ],
+      "id": "bd6930b7-88a8-45f6-a721-622c0ccbd0cd",
+      "name": "Wait",
+      "webhookId": "04facaf1-243d-4eb4-b6ad-e33ef14ddcf1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Patient mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Patient mail": {
+      "main": [
+        [
+          {
+            "node": "Dr.Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dr.Mail": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Reminder Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reminder Mail": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "359e4bc0-ffad-4dc2-9078-85918b78592a",
+  "meta": {
+    "templateId": "5841",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "43f6e80517944b2e8a19bbbb073dbb1d9e59eb66b23f6363095dfc61ae53cbe8"
+  },
+  "id": "o0MaD92fUgKTLZwr",
+  "tags": []
+}
